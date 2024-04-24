@@ -1,0 +1,35 @@
+name: Deployment Pipeline
+
+on:
+  push:
+    branches:
+      - main  # Set this to any branch from which you want to deploy
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'  # Specify the Node.js version you use
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run tests
+      run: npm test
+      env:
+        CI: true
+
+    - name: Install Vercel CLI
+      run: npm install -g vercel
+
+    - name: Deploy to Vercel
+      run: vercel --token ${{ secrets.VERCEL_TOKEN }} --prod
+      env:
+        VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}  # Your Vercel organization ID
+        VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}  # Your Vercel project ID
