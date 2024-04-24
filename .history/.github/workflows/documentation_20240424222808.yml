@@ -1,0 +1,31 @@
+name: Documentation Deployment
+
+on:
+  push:
+    paths:
+      - 'documentation/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install MkDocs
+        run: npm install mkdocs
+
+      - name: Build Documentation
+        run: npx mkdocs build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.HUB_TOKEN }}
+          publish_dir: ./site # Adjust the path to your MkDocs build directory

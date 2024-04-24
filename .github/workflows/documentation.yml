@@ -1,0 +1,32 @@
+name: Documentation Deployment
+
+on:
+  push:
+    paths:
+      - 'documentation/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'  
+
+      - name: Install MkDocs
+        run: pip install mkdocs
+
+      - name: Build Documentation
+        run: mkdocs build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.HUB_TOKEN }}  
+          publish_dir: ./site
+
