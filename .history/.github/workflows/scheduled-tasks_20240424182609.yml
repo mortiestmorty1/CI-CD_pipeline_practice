@@ -1,0 +1,32 @@
+name: Scheduled Satellite Data Update and Cleanup
+
+on:
+  schedule:
+    # Runs daily at 3:00 AM UTC
+    - cron: '0 3 * * *'
+
+jobs:
+  manage-tle-data:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16' 
+
+    - name: Install Node.js dependencies
+      run: npm install axios fs path
+
+    - name: Fetch TLE Data for ISS
+      run: node src/updateSatelliteData.js
+      env:
+        N2YO_API_KEY: ${{ secrets.N2YO_API_KEY }}  
+
+    - name: Cleanup Old TLE Data
+      run: node src/cleanupData.js
+
+    - name: Log completion
+      run: echo "TLE data fetching and cleanup completed."
